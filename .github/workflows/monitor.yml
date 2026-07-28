@@ -1,1 +1,52 @@
+name: Monitor inscripciones UNHEVAL
 
+on:
+  schedule:
+    - cron: "2-59/5 * * * *"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: monitor-unheval
+  cancel-in-progress: false
+
+jobs:
+  revisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: Instalar Chromium
+        run: python -m playwright install --with-deps chromium
+
+      - name: Revisar inscripciones
+        env:
+          UNHEVAL_STUDENT_CODE: ${{ secrets.UNHEVAL_STUDENT_CODE }}
+          UNHEVAL_PASSWORD: ${{ secrets.UNHEVAL_PASSWORD }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python monitor_unheval.py
+
+      - name: Guardar captura si falla
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: captura-error-${{ github.run_id }}
+          path: captura_unheval.png
+          if-no-files-found: ignore
+          retention-days: 2
