@@ -1,0 +1,4 @@
+.env
+captura_unheval.png
+__pycache__/
+*.pyc
