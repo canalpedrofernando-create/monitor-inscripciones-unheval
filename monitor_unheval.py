@@ -32,9 +32,7 @@ State = Literal[
 ]
 
 CLOSED_MARKERS = (
-    "no existe carga academica para el semestre actual",
-    "la inscripcion aun no esta disponible",
-    "fue desactivada temporalmente",
+    "mensaje_de_prueba_que_no_existe",
 )
 
 
