@@ -1,8 +1,6 @@
 name: Monitor inscripciones UNHEVAL
 
 on:
-  schedule:
-    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 permissions:
